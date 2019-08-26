@@ -1,7 +1,6 @@
 package de.jonashackt.springbootvuejs.controller;
 
 import de.jonashackt.springbootvuejs.SpringBootVuejsApplication;
-import de.jonashackt.springbootvuejs.domain.User;
 import io.restassured.RestAssured;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
@@ -11,9 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
@@ -34,77 +31,33 @@ public class BackendControllerTest {
     }
 
 	@Test
-	public void saysHello() {
+	public void checkForLatvia() {
 		when()
-			.get("/api/hello")
+			.post("/api/getCountry/37129702792")
 		.then()
 			.statusCode(HttpStatus.SC_OK)
 			.assertThat()
-				.body(is(equalTo(BackendController.HELLO_TEXT)));
+				.body(is(equalTo("Latvia")));
 	}
 
 	@Test
-    public void addNewUserAndRetrieveItBack() {
-        User norbertSiegmund = new User("Norbert", "Siegmund");
-
-        Long userId =
-            given()
-                .pathParam("firstName", "Norbert")
-                .pathParam("lastName", "Siegmund")
-            .when()
-                .post("/api/user/{lastName}/{firstName}")
-            .then()
-                .statusCode(is(HttpStatus.SC_CREATED))
-                .extract()
-                    .body().as(Long.class);
-
-	    User responseUser =
-            given()
-                    .pathParam("id", userId)
-                .when()
-                    .get("/api/user/{id}")
-                .then()
-                    .statusCode(HttpStatus.SC_OK)
-                    .assertThat()
-                        .extract().as(User.class);
-
-	    // Did Norbert came back?
-        assertThat(responseUser.getFirstName(), is("Norbert"));
-        assertThat(responseUser.getLastName(), is("Siegmund"));
-    }
-
-	@Test
-	public void user_api_should_give_http_404_not_found_when_user_not_present_in_db() {
-		Long someId = 200L;
-		given()
-			.pathParam("id", someId)
-		.when()
-			.get("/api/user/{id}")
-		.then()
-			.statusCode(HttpStatus.SC_NOT_FOUND);
+	public void checkForUsa() {
+		when()
+				.post("/api/getCountry/129702792")
+				.then()
+				.statusCode(HttpStatus.SC_OK)
+				.assertThat()
+				.body(is(equalTo("United States")));
 	}
 
 	@Test
-	public void secured_api_should_react_with_unauthorized_per_default() {
-
-		given()
-		.when()
-			.get("/api/secured")
-		.then()
-			.statusCode(HttpStatus.SC_UNAUTHORIZED);
-	}
-
-	@Test
-	public void secured_api_should_give_http_200_when_authorized() {
-
-		given()
-			.auth().basic("sina", "miller")
-		.when()
-			.get("/api/secured")
-		.then()
-			.statusCode(HttpStatus.SC_OK)
-			.assertThat()
-				.body(is(equalTo(BackendController.SECURED_TEXT)));
+	public void checkForRussia() {
+		when()
+				.post("/api/getCountry/7129702792")
+				.then()
+				.statusCode(HttpStatus.SC_OK)
+				.assertThat()
+				.body(is(equalTo("Russia")));
 	}
 
 }

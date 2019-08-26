@@ -1,31 +1,44 @@
 <template>
   <div class="hello">
-    <img src="./../assets/spring-boot-vuejs-logo.png">
-    <h1>{{ hellomsg }}</h1>
-    <h2>See the sources here: </h2>
-    <ul>
-      <li><a href="https://github.com/jonashackt/spring-boot-vuejs" target="_blank">github.com/jonashackt/spring-boot-vuejs</a></li>
-    </ul>
-    <h3>This site contains more stuff :)</h3>
-    <ul>
-        <li>HowTo call REST-Services:</li>
-        <li><router-link to="/callservice">/callservice</router-link></li>
-        <li>HowTo to play around with Bootstrap UI components:</li>
-        <li><router-link to="/bootstrap">/bootstrap</router-link></li>
-        <li>HowTo to interact with the Spring Boot database backend:</li>
-        <li><router-link to="/user">/user</router-link></li>
-        <li>Login to the secured part of the application</li>
-        <li><router-link to="/login">/login</router-link></li>
-        <li>A secured part of this application:</li>
-        <li><router-link to="/protected">/protected</router-link></li>
-    </ul>
+   <h1>{{hellomsg}}</h1>
+   <form @submit.prevent="getCountryCodes()">
+   <input type="number" v-model="phone"/>
+   <input type="submit" value="check"/>
+   <h4 v-if="!error">{{coutry}}</h4>
+   <h4 v-if="error" class="error">Check your phone</h4>
+   </form>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+
+const AXIOS = axios.create({
+  baseURL: `/api`,
+  timeout: 1000
+});
+
 export default {
-  name: 'hello',
-  props: { hellomsg: { type: String, required: true } }
+  
+  props: { hellomsg: { type: String, required: true } },
+  data () {
+    return {
+      phone: '',
+      coutry: '',
+      error: false
+    }
+  },
+  methods : {
+    getCountryCodes () {
+      return AXIOS.post('/getCountry/'+this.phone).then(response => {
+        this.coutry = response["data"]
+        this.error = false
+      })
+        .catch(e => {
+          this.error = true
+        })
+    }
+  }
 }
 
 </script>
