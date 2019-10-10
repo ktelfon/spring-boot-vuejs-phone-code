@@ -1,9 +1,11 @@
 package de.jonashackt.springbootvuejs.controller;
 
+import de.jonashackt.springbootvuejs.model.StringResponse;
 import de.jonashackt.springbootvuejs.service.PhoneService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -18,18 +20,18 @@ public class BackendController {
     private PhoneService phoneService;
 
     @Autowired
-    BackendController(PhoneService phoneService) {
+    BackendController(@Qualifier("phoneService") PhoneService phoneService) {
         this.phoneService = phoneService;
     }
 
-    @RequestMapping(path = "/getCountry/{phone}", method = RequestMethod.POST)
-    public ResponseEntity<String> getCountry(@PathVariable("phone") String phone) {
+    @GetMapping(path = "/getCountry/{phone}")
+    public ResponseEntity<StringResponse> getCountry(@PathVariable("phone") String phone) {
 
         String countryByCountryCode = phoneService.getCountryByCountryCode(phone);
         if (StringUtils.isEmpty(countryByCountryCode)) {
-            return new ResponseEntity<>("No country found", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<StringResponse>(new StringResponse("No country found"), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(countryByCountryCode, HttpStatus.OK);
+        return new ResponseEntity<StringResponse>(new StringResponse(countryByCountryCode), HttpStatus.OK);
     }
 
 }

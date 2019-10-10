@@ -30,7 +30,7 @@ export default {
   },
   methods : {
     getCountryCodes () {
-      return AXIOS.post('/getCountry/'+this.phone).then(response => {
+      return AXIOS.get('/getCountry/'+this.phone).then(response => {
         this.coutry = response["data"]
         this.error = false
       })
